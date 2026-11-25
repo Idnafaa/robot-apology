@@ -21,15 +21,23 @@ SECOND_LINE = (
 )
 
 MAX_CHARS = 400
+MAX_LINE_CHARS = 220
 
 
 def build_entry():
-    entry = FIRST_LINE.strip() + "\n" + SECOND_LINE.strip()
-    lines = entry.split("\n")
+    lines = [FIRST_LINE.strip(), SECOND_LINE.strip()]
     if len(lines) != 2:
         raise ValueError(f"entry must be exactly two lines, got {len(lines)}")
-    if not all(line.endswith(".") for line in lines):
-        raise ValueError("each line must be one complete sentence")
+    for line in lines:
+        if not line:
+            raise ValueError("entry lines must not be empty")
+        if not line.endswith("."):
+            raise ValueError("each line must be one complete sentence")
+        if len(line) > MAX_LINE_CHARS:
+            raise ValueError(f"line is {len(line)} chars, limit is {MAX_LINE_CHARS}")
+        if line.count(".") != 1:
+            raise ValueError("each line must hold exactly one sentence")
+    entry = "\n".join(lines)
     if not 1 <= len(entry) <= MAX_CHARS:
         raise ValueError(f"entry is {len(entry)} chars, limit is {MAX_CHARS}")
     return entry
